@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #app {
+      text-align: center;
+    }
+    #cards {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .card {
+      box-shadow: 5px 5px 3px 1px gray;
+      margin: 10px;
+      border-radius: 5px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>舒曼的旅遊相簿</h1>
+    <p>{{ goods }} 個讚</p>
+    <div id="cards">
+      <card v-for="card in cards" :data="card" @good="handleGood"></card>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="./card.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          goods: 0,
+          cards: [
+            {
+              img: './0551.jpg',
+              text: '一群魚'
+            },
+            {
+              img: './0552.jpg',
+              text: '黃色的魚'
+            },
+            {
+              img: './0553.jpg',
+              text: '黑色的魚和紅色的不知道什麼東西'
+            },
+            {
+              img: './0554.jpg',
+              text: '臉很兇的魚'
+            },
+            {
+              img: './0555.jpg',
+              text: '粉紅色的不知道什麼東西'
+            },
+          ]
+        }
+      },
+      methods: {
+        handleGood(value) {
+          if(value) {
+            this.goods++
+          } else {
+            this.goods--
+          }
+        }
+      },
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+$bgColor=#1586EF
+
+body
+  color red
+  display flex
+
+.class
+  margin 10px
+  h1
+    color blue
+    background $bgColor
+
+p
+  font-weight bold
+  &:hover
+    color green
+  &:before
+    content ''
+    display block
+  &:after
+    content: ''
+    display block
+  &:nth-child(odd)
+    border 1px solid black

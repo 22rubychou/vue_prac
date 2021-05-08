@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <input type="text" v-model="newitem" @keydown.enter="add" :style="{border: inputBorder}">
+    <input type="button" value="新增" @click="add">
+    <hr>
+    <input type="button" value="刪除全部" @click="delAll('全部')">
+    <input type="button" value="刪除已完成" @click="delAll('已完成')">
+    <input type="button" value="刪除未完成" @click="delAll('未完成')">
+    <br>
+    <input type="button" value="全部標記已完成" @click="done(true)">
+    <input type="button" value="全部標記未完成" @click="done(false)">
+    <br>
+    <input type="button" value="顯示全部" @click="show = '全部'">
+    <input type="button" value="顯示已完成" @click="show = '已完成'">
+    <input type="button" value="顯示未完成" @click="show = '未完成'">
+    <hr>
+    目前顯示: {{ show }}，總共 {{ filtered.length }} 個
+    <ul>
+      <!-- :key 必須設定為陣列裡面有單一性的值，幫助 Vue v-for 辨認陣列裡的每個東西
+      才能確保東西改變時網頁能重新渲染 -->
+      <li v-for="(item, index) in filtered" :key="item.id">
+        <input type="checkbox" v-model="item.done">
+        <span v-if="item.edit">
+          <input type="text" v-model="item.model" @keydown.enter="saveItem(item)" @keydown.esc="cancelItem(item)">
+          <input type="button" value="保存" @click="saveItem(item)">
+          <input type="button" value="取消" @click="cancelItem(item)">
+        </span>
+        <span v-else @dblclick="item.edit = true">
+          <del v-if="item.done">{{ item.text }}</del>
+          <span v-else>{{ item.text }}</span>
+          <input type="button" value="編輯" @click="item.edit = true">
+          <input type="button" value="刪除" @click="del(item)">
+        </span> 
+      </li>
+    </ul>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          newitem: '',
+          items: [],
+          show: '全部',
+          id: 1
+        }
+      },
+      computed: {
+        inputBorder() {
+          return this.newitem.length === 0 ? '5px solid black' : this.newitem.length < 2 ? '5px solid red' :'5px solid blue'
+        },
+        filtered() {
+          // .filter 陣列跑迴圈，產生新的陣列，不會影響到原本的
+          // item 代表各個東西
+          // 如果 return true 會保留，return false 會移除
+          return this.items.filter((item) => {
+            if(this.show === '全部') {
+              return true
+            }
+            else if(this.show === '已完成' && item.done) {
+              return true
+            }
+            else if(this.show === '未完成' && !item.done) {
+              return true
+            }
+            else {
+              return false
+            }
+          })
+        }
+      },
+      methods: {
+        add() {
+          if(this.newitem.length >= 2) {
+            this.items.push({
+              text: this.newitem,
+              done: false,
+              edit: false,
+              model: this.newitem,
+              id: this.id
+            })
+            this.newitem = ''
+            this.id++
+          }
+        },
+        del(item) {
+          const index = this.items.indexOf(item)
+          this.items.splice(index, 1)
+        },
+        done(value) {
+          for(let item of this.items) {
+            item.done = value
+          }
+        },
+        delAll(mode) {
+          // .filter 陣列跑迴圈，產生新的陣列，不會影響到原本的
+          // item 代表各個東西
+          // 如果 return true 會保留，return false 會移除
+          this.items = this.items.filter((item) => {
+            if(mode === '全部') {
+              return false
+            }
+            else if(mode === '已完成' && item.done) {
+              return false
+            }
+            else if(mode === '未完成' && !item.done) {
+              return false
+            }
+            else {
+              return true
+            }
+          })
+        },
+        saveItem(item) {
+          item.edit = false
+          item.text = item.model
+        },
+        cancelItem(item) {
+          item.edit = false
+          item.model = item.text
+        }
+      },
+      watch: {
+        items: {
+          handler(value) {
+            localStorage.setItem('list', JSON.stringify(value))
+          },
+          deep: true
+        }
+      },
+      mounted() {
+        const data = localStorage.getItem('list')
+        if(data) {
+          this.items = JSON.parse(data)
+          // 設定 id 為 items 最後一個東西的值 + 1
+          this.id = this.items[this.items.length - 1].id + 1
+        }
+      }
+    })
+  </script>
+</body>
+</html>

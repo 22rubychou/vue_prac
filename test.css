@@ -1,0 +1,28 @@
+body {
+  color: #f00;
+  display: flex;
+}
+.class {
+  margin: 10px;
+}
+.class h1 {
+  color: #00f;
+  background: #1586ef;
+}
+p {
+  font-weight: bold;
+}
+p:hover {
+  color: #008000;
+}
+p:before {
+  content: '';
+  display: block;
+}
+p:after {
+  content: '';
+  display: block;
+}
+p:nth-child(odd) {
+  border: 1px solid #000;
+}
